@@ -245,6 +245,14 @@ class UrdfEnv(gym.Env):
         else:
             return observation
 
+    def refresh_os(self) -> None:
+        """ refreshes the observation space for all sensors. """
+        sensors = self._robot.sensors()
+        cur_dict = dict(self.observation_space.spaces)
+        for sensor in sensors:
+            cur_dict[sensor.name()] = sensor.get_observation_space()
+        self.observation_space = gym.spaces.Dict(cur_dict)
+
     def add_obstacle(self, obst) -> None:
         """Adds obstacle to the simulation environment.
 
@@ -254,20 +262,27 @@ class UrdfEnv(gym.Env):
         obst: Obstacle from MotionPlanningEnv
         """
         # add obstacle to environment
+
         self._obsts.append(obst)
+
         obst.add_to_bullet(p)
 
         # refresh observation space of robots sensors
         sensors = self._robot.sensors()
         cur_dict = dict(self.observation_space.spaces)
+
         for sensor in sensors:
             cur_dict[sensor.name()] = sensor.get_observation_space()
+
         self.observation_space = gym.spaces.Dict(cur_dict)
+
+        # refresh observation space for robots sensors
+        self.refresh_os()
 
         if self._t != 0.0:
             warnings.warn(
-                "Adding an object while the simulation already started"
-            )
+                    "Adding an object while the simulation already started"
+                    )
 
     def get_obstacles(self) -> list:
         return self._obsts
@@ -307,6 +322,10 @@ class UrdfEnv(gym.Env):
         self.add_shapes(
             shape_type="GEOM_BOX", dim=dim, mass=0, poses_2d=poses_2d
         )
+ 
+        # refresh observation space for robots sensors
+        self.refresh_os()
+
 
     def add_shapes(
         self,
