@@ -17,7 +17,7 @@ def main():
         print("Starting episode")
         for _ in range(n_steps):
             action =default_action
-            ob,  reward, _ = env.step(action)
+            ob, reward, _, _ = env.step(action)
             cum_reward += reward
 
 

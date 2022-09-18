@@ -3,7 +3,7 @@ import numpy as np
 import pytest
 
 from urdfenvs.sensors.obstacle_sensor import ObstacleSensor
-from examples.scene_objects.obstacles import sphereObst1, urdfObst1, dynamicSphereObst3
+from examples.scene_objects.obstacles import sphere_obst_1, urdf_obst_1, dynamic_sphere_obst_3
 import urdfenvs.point_robot_urdf
 
 
@@ -17,7 +17,7 @@ def point_robot_env():
 
 
 def test_static_obstacle(point_robot_env):
-    point_robot_env.add_obstacle(sphereObst1)
+    point_robot_env.add_obstacle(sphere_obst_1)
 
     # add sensor
     sensor = ObstacleSensor()
@@ -32,13 +32,13 @@ def test_static_obstacle(point_robot_env):
     assert isinstance(ob["obstacleSensor"]["2"]["twist"]["angular"], np.ndarray)
     np.testing.assert_array_almost_equal(
         ob["obstacleSensor"]["2"]["pose"]["position"],
-        sphereObst1.position(),
+        sphere_obst_1.position(),
         decimal=2,
     )
 
 
 def test_dynamic_obstacle(point_robot_env):
-    point_robot_env.add_obstacle(dynamicSphereObst3)
+    point_robot_env.add_obstacle(dynamic_sphere_obst_3)
 
     # add sensor
     sensor = ObstacleSensor()
@@ -53,14 +53,14 @@ def test_dynamic_obstacle(point_robot_env):
     assert isinstance(ob["obstacleSensor"]["2"]["twist"]["angular"], np.ndarray)
     np.testing.assert_array_almost_equal(
         ob["obstacleSensor"]["2"]["pose"]["position"],
-        dynamicSphereObst3.position(t=point_robot_env.t()),
+        dynamic_sphere_obst_3.position(t=point_robot_env.t()),
         decimal=2,
     )
 
 
 def test_shape_observation_space(point_robot_env):
     # add obstacle and sensor
-    point_robot_env.add_obstacle(sphereObst1)
+    point_robot_env.add_obstacle(sphere_obst_1)
     sensor = ObstacleSensor()
     point_robot_env.add_sensor(sensor)
     action = np.random.random(point_robot_env.n())
@@ -82,7 +82,7 @@ def test_urdf_obstacle(point_robot_env):
     sensor = ObstacleSensor()
     point_robot_env.add_sensor(sensor)
     # change order
-    point_robot_env.add_obstacle(urdfObst1)
+    point_robot_env.add_obstacle(urdf_obst_1)
     action = np.random.random(point_robot_env.n())
     ob, _, _, _ = point_robot_env.step(action)
     assert "obstacleSensor" in ob
@@ -93,6 +93,6 @@ def test_urdf_obstacle(point_robot_env):
     assert isinstance(ob["obstacleSensor"]["2"]["twist"]["angular"], np.ndarray)
     np.testing.assert_array_almost_equal(
         ob["obstacleSensor"]["pose"]["position"],
-        dynamicSphereObst3.position(t=point_robot_env.t()),
+        dynamic_sphere_obst_3.position(t=point_robot_env.t()),
         decimal=2,
     )

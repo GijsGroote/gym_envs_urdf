@@ -2,7 +2,7 @@ import gym
 import urdfenvs.generic_urdf_reacher # pylint: disable=unused-import
 import numpy as np
 
-from examples.scene_objects.goal import dynamicGoal
+from examples.scene_objects.goal import dynamic_goal
 from examples.scene_objects.obstacles import dynamicSphereObst2
 
 goal = False
@@ -23,14 +23,14 @@ def main():
     ob = env.reset(pos=pos0)
     print(f"Initial observation : {ob}")
     if goal:
-        env.add_goal(dynamicGoal)
+        env.add_goal(dynamic_goal)
 
     if obstacles:
-        env.add_goal(dynamicGoal)
+        env.add_goal(dynamic_goal)
 
     if obstacles:
 
-        env.add_obstacle(dynamicSphereObst2)
+        env.add_obstacle(dynamic_sphere_obst_2)
     print("Starting episode")
     for _ in range(n_steps):
         ob, _, _, _ = env.step(action)
