@@ -1,6 +1,6 @@
 # pylint: disable-all
 import numpy as np
-# from urdfpy import URDF
+from urdfpy import URDF
 import os
 import urdfenvs.panda_reacher
 
@@ -12,8 +12,7 @@ class PandaAccController(AccController):
         n = 1
         k = np.zeros(n)
         urdf_file = os.path.dirname(panda_reacher.__file__) + "/resources/pandaSmall.urdf"
-        # robot = URDF.load(urdf_file)
-# NOTE: I have disabled the panda acc controller, it requires the urdfpy dependency which is outdates, Gijs Groote 19 sept 2022
+        robot = URDF.load(urdf_file)
         m = np.zeros(n)
         I = np.zeros((9, n))
         off_j = np.zeros((16, n))
