@@ -834,9 +834,9 @@ docs = ["sphinx", "sphinx-rtd-theme", "sphinx-automodapi"]
 
 [package.source]
 type = "git"
-url = "https://github.com/rshanor/urdfpy.git"
+url = "https://github.com/GijsGroote/urdfpy.git"
 reference = "master"
-resolved_reference = "ec631691ec0f7b790cdd2809946df3aa119054ce"
+resolved_reference = "cb4707d0d93445f0145fc14a68212def90e806c3"
 
 [[package]]
 name = "urllib3"
@@ -859,7 +859,7 @@ scenes = ["motion-planning-scenes"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10, <3.12"
-content-hash = "d5b60fcda5520b2534c8ea10538547f3a160cc713965c44b2a5f43760e190714"
+content-hash = "340aa576b7f66deeb7867b99d528c7ca18010590defc8c608bdf044d004df433"
 
 [metadata.files]
 alabaster = [

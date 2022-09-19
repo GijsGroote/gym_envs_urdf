@@ -11,7 +11,7 @@ gym = "^0.21.0"
 numpy = "^1.19.0"
 pytest = "^6.2.5"
 # use urdfpy unpinned version, see https://github.com/mmatl/urdfpy/pull/26
-urdfpy =  {git="https://github.com/rshanor/urdfpy.git",  rev="master"}
+urdfpy = {git="https://github.com/GijsGroote/urdfpy.git",  rev="master"}
 scipy = "^1.9.0" 
 networkx = "^2.7.0"
 Sphinx = { version = "4.2.0", optional = true }
