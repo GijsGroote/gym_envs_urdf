@@ -2,9 +2,9 @@ import gym
 import urdfenvs.point_robot_urdf # pylint: disable=unused-import
 from urdfenvs.sensors.obstacle_sensor import ObstacleSensor
 from examples.scene_objects.obstacles import (
-    sphereObst1,
-    urdfObst1,
-    dynamicSphereObst3,
+    sphere_obst_1,
+    urdf_obst_1,
+    dynamic_sphere_obst_3,
 )
 import numpy as np
 
@@ -21,9 +21,9 @@ def main():
     print(f"Initial observation : {ob}")
 
     # add obstacles
-    env.add_obstacle(sphereObst1)
-    env.add_obstacle(urdfObst1)
-    env.add_obstacle(dynamicSphereObst3)
+    env.add_obstacle(sphere_obst_1)
+    env.add_obstacle(urdf_obst_1)
+    env.add_obstacle(dynamic_sphere_obst_3)
 
     # add sensor
     sensor = ObstacleSensor()
@@ -36,7 +36,7 @@ def main():
         for _ in range(n_steps):
             t += env.dt()
             action =default_action
-            ob, _ = env.step(action)
+            ob, _, _, _ = env.step(action)
             print(ob["obstacleSensor"])
 
 
