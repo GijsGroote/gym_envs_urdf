@@ -26,6 +26,7 @@ class ObstacleSensor(Sensor):
     def __init__(self):
         super().__init__("obstacleSensor")
         self._observation = np.zeros(self.get_observation_size())
+        self._bullet_id_to_obst = None
 
     def get_obserrvation_size(self):
         """Getter for the dimension of the observation space."""
@@ -42,13 +43,17 @@ class ObstacleSensor(Sensor):
         Create observation space, all observed objects should be inside the
         observation space.
         """
+        if self._bullet_id_to_obst is None:
+            raise TypeError("""the bullet_id_to_obst is not set, please add:\n
+                obstacle_sensor.set_bullet_id_to_obst(environment.get_bullet_id_to_obst())\n
+                after adding the obstacles and before adding the obstacle_sensor to the environent""")
         spaces_dict = gym.spaces.Dict()
 
         min_os_value = -1000
         max_os_value = 1000
 
         for obj_id in range(2, p.getNumBodies()):
-            spaces_dict[str(obj_id)] = gym.spaces.Dict(
+            spaces_dict[self._bullet_id_to_obst[obj_id]] = gym.spaces.Dict(
                 {
                     "pose": gym.spaces.Dict(
                         {
@@ -91,15 +96,17 @@ class ObstacleSensor(Sensor):
         Sense the exact position of all the objects.
 
         """
-        observation = {}
+        observation= {}
 
         # assumption: p.getBodyInfo(0), p.getBodyInfo(1) are the robot and
         # ground plane respectively
+
+        # TODO: check if p.getNumbodies could skip ghost target positions.
         for obj_id in range(2, p.getNumBodies()):
             pos = p.getBasePositionAndOrientation(obj_id)
             vel = p.getBaseVelocity(obj_id)
 
-            observation[str(obj_id)] = {
+            observation[self._bullet_id_to_obst[obj_id]] = {
                 "pose": {
                     "position": np.array(pos[0]),
                     "orientation": np.array(pos[1])
@@ -111,3 +118,7 @@ class ObstacleSensor(Sensor):
             }
 
         return observation
+
+    def set_bullet_id_to_obst(self, bullet_to_obst: dict):
+        print(f" what is here {bullet_to_obst}")
+        self._bullet_id_to_obst = bullet_to_obst

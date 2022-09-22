@@ -7,6 +7,7 @@ from abc import abstractmethod
 
 from urdfenvs.urdfCommon.plane import Plane
 from urdfenvs.sensors.sensor import Sensor
+from urdfenvs.sensors.obstacle_sensor import ObstacleSensor
 from urdfenvs.urdfCommon.generic_robot import GenericRobot
 
 
@@ -183,7 +184,7 @@ class UrdfEnv(gym.Env):
         self._done: bool = False
         self._num_sub_steps: float = 20
         self._obsts: list = []
-        self._bullet_id_to_obst= {}
+        self._bullet_id_to_obst = {}
         self._goals: list = []
         self._flatten_observation: bool = flatten_ob
         self._space_set = False
@@ -313,6 +314,9 @@ class UrdfEnv(gym.Env):
 
     def get_obstacles(self) -> list:
         return self._obsts
+
+    def get_bullet_id_to_obst(self) -> dict:
+        return self._bullet_id_to_obst
 
     def add_sensor(self, sensor: Sensor) -> None:
         """Adds sensor to the robot.

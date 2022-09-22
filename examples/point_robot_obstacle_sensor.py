@@ -27,6 +27,7 @@ def main():
 
     # add sensor
     sensor = ObstacleSensor()
+    sensor.set_bullet_id_to_obst(env.get_bullet_id_to_obst())
     env.add_sensor(sensor)
 
     for _ in range(n_episodes):
@@ -37,6 +38,7 @@ def main():
             t += env.dt()
             action =default_action
             ob, _, _, _ = env.step(action)
+            print(ob)
 
 
 if __name__ == "__main__":

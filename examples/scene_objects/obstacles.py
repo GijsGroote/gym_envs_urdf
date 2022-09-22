@@ -17,7 +17,7 @@ obst_2_dict = {
     "position": [2.0, -0.0, 0.5],
     "geometry": {"radius": 0.2},
 }
-sphere_obst_2 = SphereObstacle(name="simpleSphere", content_dict=obst_2_dict)
+sphere_obst_2 = SphereObstacle(name="simpleSphere2", content_dict=obst_2_dict)
 
 urdf_obst_1_dict = {
     "type": "urdf",
@@ -33,14 +33,14 @@ dynamic_obst_1_dict = {
     "geometry": {"trajectory": ["2.0 - 0.1 * t", "-0.0", "0.1"], "radius": 0.2},
 }
 dynamic_sphere_obst_1 = DynamicSphereObstacle(
-    name="simpleSphere", content_dict=dynamic_obst_1_dict)
+    name="dynSimpleSphere", content_dict=dynamic_obst_1_dict)
 
 dynamic_obst_2_dict = {
     "type": "analyticSphere",
     "geometry": {"trajectory": ["0.6", "0.5 - 0.1 * t", "0.8"], "radius": 0.2},
 }
 dynamic_sphere_obs_2 = DynamicSphereObstacle(
-    name="simpleSphere", content_dict=dynamic_obst_2_dict)
+    name="dynSimpleSphere2", content_dict=dynamic_obst_2_dict)
 
 spline_dict = {"degree": 2,
     "controlPoints": [[0.0, 1.0, 1.0], [1.0, 1.0, 1.0], [1.0, 1.0, 0.0]],
@@ -49,6 +49,6 @@ dynamic_obst_3_dict = {
     "type": "splineSphere",
     "geometry": {"trajectory": spline_dict, "radius": 0.2},
 }
-dynamic_sphere_obst_3 = DynamicSphereObstacle(name="simpleSphere",
+dynamic_sphere_obst_3 = DynamicSphereObstacle(name="dynSimpleSphere3",
     content_dict=dynamic_obst_3_dict)
 

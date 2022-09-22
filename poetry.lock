@@ -260,7 +260,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "motion-planning-scenes"
-version = "0.1.1"
+version = "0.1.0"
 description = "Generic motion planning scenes, including goals and obstacles."
 category = "main"
 optional = false
