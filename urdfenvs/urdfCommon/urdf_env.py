@@ -183,6 +183,7 @@ class UrdfEnv(gym.Env):
         self._done: bool = False
         self._num_sub_steps: float = 20
         self._obsts: list = []
+        self._bullet_id_to_obst= {}
         self._goals: list = []
         self._flatten_observation: bool = flatten_ob
         self._space_set = False
@@ -253,19 +254,32 @@ class UrdfEnv(gym.Env):
             cur_dict[sensor.name()] = sensor.get_observation_space()
         self.observation_space = gym.spaces.Dict(cur_dict)
 
-    def add_obstacle(self, obst) -> None:
+    def add_bullet_id_to_obst(self, bullet_id: int, obst_name: str):
+        """ Adds a unique pybullet id and corresponding obstacle name """
+
+        if bullet_id in self.get_bullet_id_to_obst():
+            raise KeyError(
+                    f"key: {bullet_id} is already a key in bullet_id_to_obst")
+        if obst_name in self.get_bullet_id_to_obst().values():
+            raise ValueError(f"value: \
+                    {obst_name} is already a value in bullet_id_to_obst")
+
+        self._bullet_id_to_obst[bullet_id] = obst_name
+
+    def get_bullet_id_to_obst(self):
+        return self._bullet_id_to_obst
+
+    def add_obstacle(self, obst) -> int:
         """Adds obstacle to the simulation environment.
 
         Parameters
         ----------
 
-        obst: Obstacle from MotionPlanningEnv
+        obst: Obstacle from motion_planning_env
         """
-        # add obstacle to environment
-
         self._obsts.append(obst)
-
-        obst.add_to_bullet(p)
+        bullet_id = obst.add_to_bullet(p)
+        self.add_bullet_id_to_obst(bullet_id, obst.name())
 
         # refresh observation space of robots sensors
         sensors = self._robot.sensors()
@@ -284,8 +298,7 @@ class UrdfEnv(gym.Env):
                     "Adding an object while the simulation already started"
                     )
 
-    def get_obstacles(self) -> list:
-        return self._obsts
+        return bullet_id
 
     def add_goal(self, goal) -> None:
         """Adds goal to the simulation environment.
@@ -298,138 +311,8 @@ class UrdfEnv(gym.Env):
         self._goals.append(goal)
         goal.add_to_bullet(p)
 
-    def add_walls(
-        self,
-        dim=np.array([0.2, 8, 0.5]),
-        poses_2d=None,
-    ) -> None:
-        """
-        Adds walls to the simulation environment.
-
-        Parameters
-        ----------
-
-        dim = [width, length, height]
-        poses_2d = [[x_position, y_position, orientation], ...]
-        """
-        if poses_2d is None:
-            poses_2d = [
-                [-4, 0.1, 0],
-                [4, -0.1, 0],
-                [0.1, 4, 0.5 * np.pi],
-                [-0.1, -4, 0.5 * np.pi],
-            ]
-        self.add_shapes(
-            shape_type="GEOM_BOX", dim=dim, mass=0, poses_2d=poses_2d
-        )
- 
-        # refresh observation space for robots sensors
-        self.refresh_os()
-
-
-    def add_shapes(
-        self,
-        shape_type: str,
-        dim=None,
-        mass: float = 0,
-        poses_2d: list = None,
-        place_height=None,
-    ) -> None:
-        """
-        Adds a shape to the simulation environment.
-
-        Parameters
-        ----------
-
-        shape_type: str
-            options are:
-                "GEOM_SPHERE",
-                "GEOM_BOX",
-                "GEOM_CYLINDER",
-                "GEOM_CAPSULE"
-            .
-        dim: np.ndarray or list
-            dimensions for the shape, dependent on the shape_type:
-                GEOM_SPHERE,    dim=[radius]
-                GEOM_BOX,       dim=[width, length, height]
-                GEOM_CYLINDER,  dim=[radius, length]
-                GEOM_CAPSULE,   dim=[radius, length]
-        mass: float
-            objects mass (default = 0 : fixed shape)
-        poses_2d: list
-            poses where the shape should be placed. Each element
-            must be of form [x_position, y_position, orientation]
-        place_height: float
-            z_position of the center of mass
-        """
-        if poses_2d is None:
-            poses_2d = [[-2, 2, 0]]
-        # convert list to numpy array
-        if isinstance(dim, list):
-            dim = np.array(dim)
-
-        # create collisionShape
-        if shape_type == "GEOM_SPHERE":
-            # check dimensions
-            dim = filter_shape_dim(
-                dim, "GEOM_SPHERE", 1, default=np.array([0.5])
-            )
-            shape_id = p.createCollisionShape(p.GEOM_SPHERE, radius=dim[0])
-            default_height = dim[0]
-
-        elif shape_type == "GEOM_BOX":
-            if dim is not None:
-                dim = 0.5 * dim
-            # check dimensions
-            dim = filter_shape_dim(
-                dim, "GEOM_BOX", 3, default=np.array([0.5, 0.5, 0.5])
-            )
-            shape_id = p.createCollisionShape(p.GEOM_BOX, halfExtents=dim)
-            default_height = dim[2]
-
-        elif shape_type == "GEOM_CYLINDER":
-            # check dimensions
-            dim = filter_shape_dim(
-                dim, "GEOM_CYLINDER", 2, default=np.array([0.5, 1.0])
-            )
-            shape_id = p.createCollisionShape(
-                p.GEOM_CYLINDER, radius=dim[0], height=dim[1]
-            )
-            default_height = 0.5 * dim[1]
-
-        elif shape_type == "GEOM_CAPSULE":
-            # check dimensions
-            dim = filter_shape_dim(
-                dim, "GEOM_CAPSULE", 2, default=np.array([0.5, 1.0])
-            )
-            shape_id = p.createCollisionShape(
-                p.GEOM_CAPSULE, radius=dim[0], height=dim[1]
-            )
-            default_height = dim[0] + 0.5 * dim[1]
-
-        else:
-            warnings.warn(
-                "Unknown shape type: {shape_type}, aborting..."
-            )
-            return
-
-        if place_height is None:
-            place_height = default_height
-
-        # place the shape at poses_2d
-        for pose in poses_2d:
-            p.createMultiBody(
-                baseMass=mass,
-                baseCollisionShapeIndex=shape_id,
-                baseVisualShapeIndex=-1,
-                basePosition=[pose[0], pose[1], place_height],
-                baseOrientation=p.getQuaternionFromEuler([0, 0, pose[2]]),
-            )
-
-        if self._t != 0.0:
-            warnings.warn(
-                "Adding an object while the simulation already started"
-            )
+    def get_obstacles(self) -> list:
+        return self._obsts
 
     def add_sensor(self, sensor: Sensor) -> None:
         """Adds sensor to the robot.

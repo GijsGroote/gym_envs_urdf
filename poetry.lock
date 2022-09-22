@@ -260,7 +260,7 @@ python-versions = ">=3.7"
 
 [[package]]
 name = "motion-planning-scenes"
-version = "0.1.2"
+version = "0.1.1"
 description = "Generic motion planning scenes, including goals and obstacles."
 category = "main"
 optional = false
@@ -280,10 +280,8 @@ PyYAML = "^6.0"
 bullet = ["pybullet (>=3.2.3,<4.0.0)"]
 
 [package.source]
-type = "git"
-url = "https://github.com/GijsGroote/motion_planning_scenes.git"
-reference = "develop"
-resolved_reference = "c4d3f34a70b6f3dc540fe28005d19fa4a8aca0fe"
+type = "directory"
+url = "../motion_planning_scenes"
 
 [[package]]
 name = "multiprocess"
@@ -883,7 +881,7 @@ scenes = ["motion-planning-scenes"]
 [metadata]
 lock-version = "1.1"
 python-versions = ">=3.10, <3.12"
-content-hash = "340aa576b7f66deeb7867b99d528c7ca18010590defc8c608bdf044d004df433"
+content-hash = "9e76ea088fec3afd6798e7cb9d5000145918d37c671c0dbaecec46ac2824ccf3"
 
 [metadata.files]
 alabaster = [

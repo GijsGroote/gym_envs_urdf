@@ -37,7 +37,6 @@ def main():
             t += env.dt()
             action =default_action
             ob, _, _, _ = env.step(action)
-            print(ob["obstacleSensor"])
 
 
 if __name__ == "__main__":
