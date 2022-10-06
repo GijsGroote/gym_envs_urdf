@@ -120,5 +120,4 @@ class ObstacleSensor(Sensor):
         return observation
 
     def set_bullet_id_to_obst(self, bullet_to_obst: dict):
-        print(f" what is here {bullet_to_obst}")
         self._bullet_id_to_obst = bullet_to_obst

@@ -315,9 +315,6 @@ class UrdfEnv(gym.Env):
     def get_obstacles(self) -> list:
         return self._obsts
 
-    def get_bullet_id_to_obst(self) -> dict:
-        return self._bullet_id_to_obst
-
     def add_sensor(self, sensor: Sensor) -> None:
         """Adds sensor to the robot.
 

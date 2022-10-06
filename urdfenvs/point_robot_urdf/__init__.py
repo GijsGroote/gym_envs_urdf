@@ -1,9 +1,11 @@
 from gym.envs.registration import register
 register(
-    id='pointRobotUrdf-vel-v0',
+    id='point_robot-vel',
     entry_point='urdfenvs.point_robot_urdf.envs:PointRobotVelEnv'
 )
+
+
 register(
-    id='pointRobotUrdf-acc-v0',
+    id='point_robot-acc',
     entry_point='urdfenvs.point_robot_urdf.envs:PointRobotAccEnv'
 )
