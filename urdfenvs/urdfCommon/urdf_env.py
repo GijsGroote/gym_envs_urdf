@@ -188,6 +188,8 @@ class UrdfEnv(gym.Env):
         self._goals: list = []
         self._flatten_observation: bool = flatten_ob
         self._space_set = False
+        self.ghost_id = None # ghost target position pybullet id
+
         if self._render:
             cid = p.connect(p.SHARED_MEMORY)
             if cid < 0:
@@ -267,6 +269,24 @@ class UrdfEnv(gym.Env):
 
         self._bullet_id_to_obst[bullet_id] = obst_name
 
+    def get_obst_from_obst_name(self, obst_name: str) -> tuple:
+        """ Returns the pybullet id from the corresponding obstacle name. """
+
+        # search for the obstacle bullet_id
+        for temp_key, temp_name in self._bullet_id_to_obst.items():
+            if obst_name == temp_name:
+
+                # search for the obstacle by bullet_id
+                for obst_temp in self._obsts:
+                    if obst_temp.bullet_id() == temp_key:
+                        
+                        # find current height
+                        # TODO: this function does more than it tells, split into 2 functions
+                        pos = p.getBasePositionAndOrientation(temp_key)
+                        return (obst_temp, pos[0][2])
+
+        raise ValueError(f"obstacle name {obst_name} doesn't exist")
+
     def get_bullet_id_to_obst(self):
         return self._bullet_id_to_obst
 
@@ -300,6 +320,54 @@ class UrdfEnv(gym.Env):
                     )
 
         return bullet_id
+
+    def add_target_ghost(self, obst_name: str, target_2d_pose: np.ndarray):
+        """ adds a ghost target position.
+
+        Parameters
+        ----------
+
+        obst_name: obstacle's name
+        target_2d_pose: 2-dimensional target ghost pose [x, y, theta] 
+
+        """
+
+        # find the obstacle
+        (obst, heigth) = self.get_obst_from_obst_name(obst_name)
+
+        # remove old visual shape
+        if self.ghost_id is not None:
+            p.removeBody(self.ghost_id)
+
+        # add visual shape to the environment
+        visual_shape_id = obst.ghost_visual_shape
+
+        base_position = [target_2d_pose[0], target_2d_pose[1], heigth]
+
+        # convert euler to quaternion
+        yaw = target_2d_pose[2]
+
+        qx = float(np.sin(0) * np.cos(0) * np.cos(yaw/2)\
+        - np.cos(0) * np.sin(0) * np.sin(yaw/2))
+        qy = float(np.cos(0) * np.sin(0) * np.cos(yaw/2)\
+        + np.sin(0) * np.cos(0) * np.sin(yaw/2))
+        qz = float(np.cos(0) * np.cos(0) * np.sin(yaw/2)\
+        - np.sin(0) * np.sin(0) * np.cos(yaw/2))
+        qw = float(np.cos(0) * np.cos(0) * np.cos(yaw/2)\
+        + np.sin(0) * np.sin(0) * np.sin(yaw/2))
+
+        base_orientation = [qx, qy, qz, qw]
+
+        self.ghost_id = p.createMultiBody(
+            baseVisualShapeIndex=visual_shape_id,
+            basePosition=base_position,
+            baseOrientation=base_orientation,
+        )
+
+        # prevent obstacle sensor from finding the ghost visual shape
+        for temp_sensor in self._robot._sensors:
+            if isinstance(temp_sensor, ObstacleSensor):
+                temp_sensor.set_ghost_target_id(self.ghost_id)
 
     def add_goal(self, goal) -> None:
         """Adds goal to the simulation environment.

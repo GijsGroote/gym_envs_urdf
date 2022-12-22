@@ -27,6 +27,7 @@ class ObstacleSensor(Sensor):
         super().__init__("obstacleSensor")
         self._observation = np.zeros(self.get_observation_size())
         self._bullet_id_to_obst = None
+        self.ghost_target_id = 0
 
     def get_obserrvation_size(self):
         """Getter for the dimension of the observation space."""
@@ -101,10 +102,13 @@ class ObstacleSensor(Sensor):
         # assumption: p.getBodyInfo(0), p.getBodyInfo(1) are the robot and
         # ground plane respectively
 
-        # TODO: check if p.getNumbodies could skip ghost target positions.
         for obj_id in range(2, p.getNumBodies()):
             pos = p.getBasePositionAndOrientation(obj_id)
             vel = p.getBaseVelocity(obj_id)
+
+            # skip any visual ghost target 
+            if obj_id == self.ghost_target_id:
+                continue
 
             observation[self._bullet_id_to_obst[obj_id]] = {
                 "pose": {
@@ -118,6 +122,9 @@ class ObstacleSensor(Sensor):
             }
 
         return observation
+
+    def set_ghost_target_id(self, target_id):
+        self.ghost_target_id = target_id
 
     def set_bullet_id_to_obst(self, bullet_to_obst: dict):
         self._bullet_id_to_obst = bullet_to_obst
