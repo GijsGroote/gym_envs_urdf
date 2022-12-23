@@ -243,7 +243,7 @@ class UrdfEnv(gym.Env):
                 observation,
                 self.observation_space,
             )
-            warnings.warn(str(err))
+            # warnings.warn(str(err))
         if self._flatten_observation:
             return flatten_observation(observation)
         else:
