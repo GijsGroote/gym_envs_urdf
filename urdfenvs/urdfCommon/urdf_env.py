@@ -279,7 +279,7 @@ class UrdfEnv(gym.Env):
                 # search for the obstacle by bullet_id
                 for obst_temp in self._obsts:
                     if obst_temp.bullet_id() == temp_key:
-                        
+
                         # find current height
                         # TODO: this function does more than it tells, split into 2 functions
                         pos = p.getBasePositionAndOrientation(temp_key)
@@ -328,7 +328,7 @@ class UrdfEnv(gym.Env):
         ----------
 
         obst_name: obstacle's name
-        target_2d_pose: 2-dimensional target ghost pose [x, y, theta] 
+        target_2d_pose: 2-dimensional target ghost pose [x, y, theta]
 
         """
 
@@ -423,8 +423,18 @@ class UrdfEnv(gym.Env):
             self.set_spaces()
             self._space_set = True
         self.plane = Plane()
+
+        # remove obstacles
+        for i in range(p.getNumBodies()):
+            if i > 2:
+                p.remove(i)
+        self._bullet_id_to_obst = {}
+        self.ghost_id = None
+        self._robot._sensors = [] # this is bad practice, call a robot.clear_sensors() function
+
         p.setGravity(0, 0, -10.0)
         p.stepSimulation()
+
         return self._robot.get_observation()
 
     def render(self) -> None:

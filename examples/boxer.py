@@ -4,7 +4,7 @@ import numpy as np
 
 
 def main():
-    env = gym.make("boxer-robot-vel-v0", dt=0.01, render=True)
+    env = gym.make("boxerRobot-vel-v7", dt=0.01, render=True)
     default_action = np.array([0.6, 0.8])
     n_episodes = 1
     n_steps = 100000

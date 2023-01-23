@@ -2,10 +2,10 @@ import gym
 import urdfenvs.point_robot_urdf # pylint: disable=unused-import
 import numpy as np
 from examples.scene_objects.obstacles import (
-    sphereObst1,
-    sphereObst2,
-    urdfObst1,
-    dynamicSphereObst3,
+    sphere_obst_1,
+    sphere_obst_2,
+    urdf_obst_1,
+    dynamic_sphere_obst_3,
 )
 
 from examples.scene_objects.goal import splineGoal
@@ -13,9 +13,8 @@ from examples.scene_objects.goal import splineGoal
 obstacles = False
 goal = False
 
-
 def main():
-    env = gym.make("pointRobotUrdf-vel-v0", dt=0.05,
+    env = gym.make("pointRobot-vel-v7", dt=0.05,
         render=True, flatten_observation=True)
     action = np.array([0.1, 0.0, 1.0])
     n_steps = 100000
