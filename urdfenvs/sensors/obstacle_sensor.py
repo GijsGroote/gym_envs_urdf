@@ -108,8 +108,7 @@ class ObstacleSensor(Sensor):
 
 
             # skip any visual ghost target
-            print(f'these are the target ids {self.ghost_target_ids}')
-            if obj_id in self.ghost_target_ids:
+            if obj_id == self.ghost_target_id:
                 continue
 
             observation[self._bullet_id_to_obst[obj_id]] = { # added?
