@@ -321,6 +321,61 @@ class UrdfEnv(gym.Env):
 
         return bullet_id
 
+    def add_robot_target_ghost(self, robot_name, target_2d_pose):
+        """ add ghost position of the robot to the environment """
+
+        heigth = 0.2
+
+        # remove old visual shape
+        if self.ghost_id is not None:
+            p.removeBody(self.ghost_id)
+
+        if robot_name == "boxerRobot-vel-v7":
+            visual_shape_id = p.createVisualShape(
+                p.GEOM_MESH,
+                fileName="box.obj",
+                rgbaColor=[120/255, 120/255, 120/255, 0.7],
+                meshScale=[0.3, 0.25, heigth]
+            )
+
+        elif robot_name == "pointRobot-vel-v7":
+            visual_shape_id = p.createVisualShape(
+                p.GEOM_MESH,
+                fileName="cylinder.obj",
+                rgbaColor=[120/255, 120/255, 120/255, 0.7],
+                meshScale=[0.22, 0.22, heigth]
+            )
+
+        else:
+            raise ValueError("robot name not valid")
+
+        base_position = [target_2d_pose[0], target_2d_pose[1], heigth]
+
+        # convert euler to quaternion
+        yaw = target_2d_pose[2]
+
+        qx = float(np.sin(0) * np.cos(0) * np.cos(yaw/2)\
+        - np.cos(0) * np.sin(0) * np.sin(yaw/2))
+        qy = float(np.cos(0) * np.sin(0) * np.cos(yaw/2)\
+        + np.sin(0) * np.cos(0) * np.sin(yaw/2))
+        qz = float(np.cos(0) * np.cos(0) * np.sin(yaw/2)\
+        - np.sin(0) * np.sin(0) * np.cos(yaw/2))
+        qw = float(np.cos(0) * np.cos(0) * np.cos(yaw/2)\
+        + np.sin(0) * np.sin(0) * np.sin(yaw/2))
+
+        base_orientation = [qx, qy, qz, qw]
+
+        self.ghost_id = p.createMultiBody(
+            baseVisualShapeIndex=visual_shape_id,
+            basePosition=base_position,
+            baseOrientation=base_orientation,
+        )
+
+        # prevent obstacle sensor from finding the ghost visual shape
+        for temp_sensor in self._robot._sensors:
+            if isinstance(temp_sensor, ObstacleSensor):
+                temp_sensor.set_ghost_target_id(self.ghost_id)
+
     def add_target_ghost(self, obst_name: str, target_2d_pose: np.ndarray):
         """ adds a ghost target position.
 

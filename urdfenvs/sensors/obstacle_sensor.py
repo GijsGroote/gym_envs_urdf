@@ -27,7 +27,7 @@ class ObstacleSensor(Sensor):
         super().__init__("obstacleSensor")
         self._observation = np.zeros(self.get_observation_size())
         self._bullet_id_to_obst = None
-        self.ghost_target_id = 0
+        self.ghost_target_id = None
 
     def get_obserrvation_size(self):
         """Getter for the dimension of the observation space."""
@@ -106,11 +106,13 @@ class ObstacleSensor(Sensor):
             pos = p.getBasePositionAndOrientation(obj_id)
             vel = p.getBaseVelocity(obj_id)
 
-            # skip any visual ghost target 
-            if obj_id == self.ghost_target_id:
+
+            # skip any visual ghost target
+            print(f'these are the target ids {self.ghost_target_ids}')
+            if obj_id in self.ghost_target_ids:
                 continue
 
-            observation[self._bullet_id_to_obst[obj_id]] = {
+            observation[self._bullet_id_to_obst[obj_id]] = { # added?
                 "pose": {
                     "position": np.array(pos[0]),
                     "orientation": np.array(pos[1])
