@@ -324,7 +324,7 @@ class UrdfEnv(gym.Env):
     def add_robot_target_ghost(self, robot_name, target_2d_pose):
         """ add ghost position of the robot to the environment """
 
-        heigth = 0.2
+        heigth = 0.08
 
         # remove old visual shape
         if self.ghost_id is not None:
@@ -334,7 +334,7 @@ class UrdfEnv(gym.Env):
             visual_shape_id = p.createVisualShape(
                 p.GEOM_MESH,
                 fileName="box.obj",
-                rgbaColor=[120/255, 120/255, 120/255, 0.7],
+                rgbaColor=[205/255, 205/255, 205/255, 0.6],
                 meshScale=[0.3, 0.25, heigth]
             )
 
@@ -342,7 +342,7 @@ class UrdfEnv(gym.Env):
             visual_shape_id = p.createVisualShape(
                 p.GEOM_MESH,
                 fileName="cylinder.obj",
-                rgbaColor=[120/255, 120/255, 120/255, 0.7],
+                rgbaColor=[205/255, 205/255, 205/255, 0.6],
                 meshScale=[0.22, 0.22, heigth]
             )
 
