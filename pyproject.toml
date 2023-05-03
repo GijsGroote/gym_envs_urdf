@@ -7,7 +7,7 @@ authors = ["Gijs Groote <gijsgroote@hotmail.com>","Max Spahn <m.spahn@tudelft.nl
 [tool.poetry.dependencies]
 python = ">=3.10, <3.12"
 pybullet = "^3.2.1"
-gym = "^0.21.0"
+gym = "^0.26.0"
 numpy = ">=1.19.0, <1.24.0"
 pytest = "^6.2.5"
 # use urdfpy unpinned version, see https://github.com/mmatl/urdfpy/pull/26
