@@ -57,7 +57,7 @@ class DifferentialDriveRobot(GenericRobot):
         """ Reset simulation and add robot """
         if hasattr(self, "_robot"):
             p.resetSimulation()
-        base_orientation = p.getQuaternionFromEuler([0, 0, pos[2]])
+        base_orientation = p.getQuaternionFromEuler([0, 0, 0])
         spawn_pos = self._spawn_offset + np.array([pos[0], pos[1], 0.0])
         self._robot = p.loadURDF(
             fileName=self._urdf_file,
