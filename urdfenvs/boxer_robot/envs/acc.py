@@ -1,6 +1,5 @@
 from urdfenvs.boxer_robot.envs.boxer_robot_env import BoxerRobotEnv
 
-
 class BoxerRobotAccEnv(BoxerRobotEnv):
     def reset(self, pos=None, vel=None):
         ob = super().reset(pos=pos, vel=vel)
