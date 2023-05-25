@@ -1,3 +1,4 @@
+import numpy as np
 from urdfenvs.point_robot_urdf.envs.point_robot_env import PointRobotEnv
 
 
